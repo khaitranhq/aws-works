@@ -8,6 +8,7 @@ import (
 	// "os/exec"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/atotto/clipboard"
 	"github.com/khaitranhq/aws-works/internal/aws/ec2"
 	"github.com/khaitranhq/aws-works/internal/common"
 	"github.com/khaitranhq/aws-works/internal/util"
@@ -114,6 +115,14 @@ func selectUser(keyFolderDirectory string, instanceId string) string {
 	return selectedUser
 }
 
+func getSSHCommand(keyPairFolder, user, instanceId, publicIp string) string {
+	keyPairDirectory := fmt.Sprintf("%s/%s@%s", keyPairFolder, user, instanceId)
+
+	os.Setenv("AWS_WORKS_SSH_DIRECTORY", keyPairDirectory)
+	sshCommand := fmt.Sprintf("ssh -i %s %s@%s", keyPairDirectory, user, publicIp)
+	return sshCommand
+}
+
 func ConnectInstance() {
 	profile := common.SelectAwsProfile()
 	region := common.SelectRegion()
@@ -145,9 +154,7 @@ func ConnectInstance() {
 
 	fmt.Println("Default connection type is SSH")
 
-	keyPairDirectory := keyPairFolder + "/" + user + "@" + *instance.InstanceId
-
-	os.Setenv("AWS_WORKS_SSH_DIRECTORY", keyPairDirectory)
-	sshCommand := "ssh -i " + keyPairDirectory + " " + user + "@" + *instance.PublicIp + "\n"
-	fmt.Printf("SSH Command: %s", sshCommand)
+	command := getSSHCommand(keyPairFolder, user, *instance.InstanceId, *instance.PublicIp)
+	clipboard.WriteAll(command)
+	fmt.Println("Copyied SSH command to clipboard")
 }
