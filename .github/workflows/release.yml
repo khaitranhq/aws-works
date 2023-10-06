@@ -16,4 +16,4 @@ jobs:
         goos: linux
         goarch: amd64
         binary_name: awsworks
-        goversion: 1.20
+        goversion: 1.20.9
