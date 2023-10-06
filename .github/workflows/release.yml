@@ -1,6 +1,9 @@
 name: Release
 on:
   workflow_dispatch:
+  push:
+    branch:
+      - feature/release
   release:
     types: [created]
 
