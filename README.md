@@ -1,6 +1,6 @@
 # AWS Works
 
-Reduce your time to manage AWS Cloud.
+Reduce your time to manage multiple AWS Clouds.
 
 ## Installation
 
@@ -15,6 +15,8 @@ sudo mv awsworks /usr/local/bin
 - [x] Connect to EC2 instances using SSH
 - [ ] Backup SSH keys
 - [ ] Connect to EC2 instances using System Manager
+
+_TODO: Add some images_
 
 ## Contributing
 
