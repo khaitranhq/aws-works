@@ -13,8 +13,8 @@ sudo mv awsworks /usr/local/bin
 ## Features
 
 - [x] Connect to EC2 instances using SSH
-- [ ] Connect to EC2 instances using System Manager
 - [ ] Backup SSH keys
+- [ ] Connect to EC2 instances using System Manager
 
 ## Contributing
 
