@@ -17,4 +17,3 @@ jobs:
         goarch: amd64
         binary_name: awsworks
         goversion: 1.20.9
-        extra_files: awsworks
