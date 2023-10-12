@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/AlecAivazis/survey/v2"
+	init_config "github.com/khaitranhq/aws-works/internal/tasks/init-config"
 	instance_connect "github.com/khaitranhq/aws-works/internal/tasks/instance-connect"
 )
 
@@ -33,10 +34,15 @@ func selectTask(tasks []Task) Task {
 }
 
 func main() {
-	tasks := []Task{{
-		Description: "1. Connect to instance",
-		Command:     instance_connect.ConnectInstance,
-	}}
+	tasks := []Task{
+		{
+			Description: "1. Initialization",
+			Command:     init_config.InitConfig,
+		},
+		{
+			Description: "2. Connect to instance",
+			Command:     instance_connect.ConnectInstance,
+		}}
 
 	selectedTask := selectTask(tasks)
 	selectedTask.Command()
