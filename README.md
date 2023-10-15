@@ -14,7 +14,7 @@ sudo mv awsworks /usr/local/bin
 
 - [x] Connect to EC2 instances using SSH
 - [ ] Backup SSH keys
-- [ ] Connect to EC2 instances using System Manager
+- [x] Connect to EC2 instances using System Manager
 
 _TODO: Add some images_
 

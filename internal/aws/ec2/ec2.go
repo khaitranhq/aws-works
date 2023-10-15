@@ -13,6 +13,7 @@ type Instance struct {
 	InstanceName *string
 	InstanceId   *string
 	PublicIp     *string
+	State        *string
 }
 
 func GetInstances(profile, region string) []Instance {
@@ -42,6 +43,7 @@ func GetInstances(profile, region string) []Instance {
 				InstanceName: new(string),
 				InstanceId:   instance.InstanceId,
 				PublicIp:     instance.PublicIpAddress,
+				State:        (*string)(&instance.State.Name),
 			}
 			for _, tag := range instance.Tags {
 				if *tag.Key == "Name" {
@@ -54,4 +56,16 @@ func GetInstances(profile, region string) []Instance {
 	}
 
 	return instances
+}
+
+func GetRunningInstances(profile, region string) []Instance {
+	instances := GetInstances(profile, region)
+
+	runningInstances := []Instance{}
+	for _, instance := range instances {
+		if *instance.State == "running" {
+			runningInstances = append(runningInstances, instance)
+		}
+	}
+	return runningInstances
 }
