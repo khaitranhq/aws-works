@@ -123,6 +123,18 @@ func getSSHCommand(keyPairFolder, user, instanceId, publicIp string) string {
 	return sshCommand
 }
 
+func getConnectMethod() string {
+	prompt := &survey.Select{
+		Message: "Choose the connection method",
+		Options: []string{"AWS System Manager", "SSH"},
+		Default: "AWS System Manager",
+	}
+
+	selectedMethod := "AWS System Manager"
+	survey.AskOne(prompt, &selectedMethod)
+	return selectedMethod
+}
+
 func ConnectInstance() {
 	profile := common.SelectAwsProfile()
 	region := common.SelectRegion()
@@ -150,11 +162,21 @@ func ConnectInstance() {
 	}
 
 	instance := selectInstance(profile, region)
-	user := selectUser(keyPairFolder, *instance.InstanceId)
+	connectionMethod := getConnectMethod()
 
-	fmt.Println("Default connection type is SSH")
+	if connectionMethod == "SSH" {
+		user := selectUser(keyPairFolder, *instance.InstanceId)
+		command := getSSHCommand(keyPairFolder, user, *instance.InstanceId, *instance.PublicIp)
+		clipboard.WriteAll(command)
+		fmt.Println("Copyied SSH command to clipboard")
+	}
 
-	command := getSSHCommand(keyPairFolder, user, *instance.InstanceId, *instance.PublicIp)
-	clipboard.WriteAll(command)
-	fmt.Println("Copyied SSH command to clipboard")
+	if connectionMethod == "AWS System Manager" {
+		connectCommand := fmt.Sprintf(
+			"aws ssm start-session --target %s --profile %s",
+			*instance.InstanceId,
+			profile,
+		)
+		clipboard.WriteAll(connectCommand)
+	}
 }
