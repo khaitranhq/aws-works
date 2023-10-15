@@ -18,7 +18,7 @@ const EC2_KEYS_DIRECTORY = "/aws-works/keys"
 
 func selectInstance(profile, region string) ec2.Instance {
 
-	instances := ec2.GetInstances(profile, region)
+	instances := ec2.GetRunningInstances(profile, region)
 
 	// Select instance
 	selectInstanceOptions := []string{}
