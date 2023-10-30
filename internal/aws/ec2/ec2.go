@@ -20,7 +20,7 @@ func GetInstances(profile, region string) []Instance {
 	cfg, err := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithSharedConfigProfile(profile),
-		config.WithDefaultRegion(region),
+		config.WithRegion(region),
 	)
 
 	if err != nil {
