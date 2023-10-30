@@ -28,7 +28,7 @@ func GetAwsProfiles() []string {
 	}
 
 	// Get names of other profiles
-	re = regexp2.MustCompile("(?<=profile\\s)[a-zA-Z]*", 0)
+	re = regexp2.MustCompile("(?<=profile\\s)[a-zA-Z-]*", 0)
 	matches := util.FindAllMatchedSubString(re, string(awsProfileConfigData))
 	profiles = append(profiles, matches...)
 
