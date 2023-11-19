@@ -5,8 +5,8 @@ Reduce your time to manage multiple AWS Clouds.
 ## Installation
 
 ```shell
-wget https://github.com/khaitranhq/aws-works/releases/download/v1.0.0/awsworks-v1.0.0-linux-amd64.tar.gz
-tar xvzf awsworks-v1.0.0-linux-amd64.tar.gz
+wget https://github.com/khaitranhq/aws-works/releases/download/v1.2.0/awsworks-v1.0.0-linux-amd64.tar.gz
+tar xvzf awsworks-v1.2.0-linux-amd64.tar.gz
 sudo mv awsworks /usr/local/bin
 ```
 
