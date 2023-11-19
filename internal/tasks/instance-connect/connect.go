@@ -118,7 +118,6 @@ func selectUser(keyFolderDirectory string, instanceId string) string {
 func getSSHCommand(keyPairFolder, user, instanceId, publicIp string) string {
 	keyPairDirectory := fmt.Sprintf("%s/%s@%s", keyPairFolder, user, instanceId)
 
-	os.Setenv("AWS_WORKS_SSH_DIRECTORY", keyPairDirectory)
 	sshCommand := fmt.Sprintf("ssh -i %s %s@%s", keyPairDirectory, user, publicIp)
 	return sshCommand
 }
