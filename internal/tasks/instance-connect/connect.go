@@ -115,10 +115,22 @@ func selectUser(keyFolderDirectory string, instanceId string) string {
 	return selectedUser
 }
 
-func getSSHCommand(keyPairFolder, user, instanceId, publicIp string) string {
+func getSSHCommand(keyPairFolder, user, profile, instanceId string, publicIp *string) string {
 	keyPairDirectory := fmt.Sprintf("%s/%s@%s", keyPairFolder, user, instanceId)
 
-	sshCommand := fmt.Sprintf("ssh -i %s %s@%s", keyPairDirectory, user, publicIp)
+	if publicIp == nil {
+		sshCommand := fmt.Sprintf(
+			"ssh -i %s -o ProxyCommand='aws ec2-instance-connect open-tunnel --instance-id %s --profile %s' %s@%s",
+			keyPairDirectory,
+			instanceId,
+			profile,
+			user,
+			instanceId,
+		)
+		return sshCommand
+	}
+
+	sshCommand := fmt.Sprintf("ssh -i %s %s@%s", keyPairDirectory, user, *publicIp)
 	return sshCommand
 }
 
@@ -165,7 +177,13 @@ func ConnectInstance() {
 
 	if connectionMethod == "SSH" {
 		user := selectUser(keyPairFolder, *instance.InstanceId)
-		command := getSSHCommand(keyPairFolder, user, *instance.InstanceId, *instance.PublicIp)
+		command := getSSHCommand(
+			keyPairFolder,
+			user,
+			profile,
+			*instance.InstanceId,
+			instance.PublicIp,
+		)
 		clipboard.WriteAll(command)
 		fmt.Println("Copyied SSH command to clipboard")
 	}
