@@ -148,7 +148,7 @@ func getConnectMethod() string {
 
 func ConnectInstance() {
 	profile := common.SelectAwsProfile()
-	region := common.SelectRegion()
+	region := common.SelectRegion(profile)
 
 	// Check existence of instance key
 	configDir, configDirErr := os.UserConfigDir()

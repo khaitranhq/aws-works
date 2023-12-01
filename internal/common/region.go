@@ -1,6 +1,14 @@
 package common
 
-import "github.com/AlecAivazis/survey/v2"
+import (
+	"fmt"
+	"os"
+
+	"github.com/AlecAivazis/survey/v2"
+	"github.com/dlclark/regexp2"
+	"github.com/khaitranhq/aws-works/internal/config"
+	"github.com/khaitranhq/aws-works/internal/util"
+)
 
 var regions = []string{
 	"ap-southeast-1",
@@ -37,11 +45,48 @@ var regions = []string{
 	"us-west-2",
 }
 
-func SelectRegion() string {
+func GetDefaultRegion(profile string) string {
+	homeDir, _ := os.UserHomeDir()
+	awsProfileConfigData, err := os.ReadFile(homeDir + config.AWS_PROFILE_CONFIG_DIRECTORY)
+
+	if err != nil {
+		util.ErrorPrint(err.Error())
+		os.Exit(1)
+	}
+
+	re := regexp2.MustCompile(
+		fmt.Sprintf("(?<=\\[profile %s\\]\\nregion = )[a-zA-Z0-9-]*", profile),
+		0,
+	)
+	if match, _ := re.FindStringMatch(string(awsProfileConfigData)); match != nil {
+		return match.String()
+	}
+	return regions[0]
+}
+
+func sortRegion(defaultRegion string) []string {
+	defaultRegionIndex := 0
+	for i, region := range regions {
+		if region == defaultRegion {
+			defaultRegionIndex = i
+			break
+		}
+	}
+
+	return append(
+		[]string{defaultRegion},
+		append(regions[:defaultRegionIndex], regions[defaultRegionIndex+1:]...)...,
+	)
+}
+
+func SelectRegion(profile string) string {
+	defaultRegion := GetDefaultRegion(profile)
+	fmt.Println(defaultRegion)
 	selectedRegion := ""
+	sortedRegion := sortRegion(defaultRegion)
 	prompt := &survey.Select{
 		Message: "Choose a region",
-		Options: regions,
+		Options: sortedRegion,
 	}
 
 	survey.AskOne(prompt, &selectedRegion)
