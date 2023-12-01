@@ -5,14 +5,13 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/dlclark/regexp2"
+	"github.com/khaitranhq/aws-works/internal/config"
 	"github.com/khaitranhq/aws-works/internal/util"
 )
 
-const AWS_PROFILE_CONFIG_DIRECTORY = "/.aws/config"
-
 func GetAwsProfiles() []string {
 	homeDir, _ := os.UserHomeDir()
-	awsProfileConfigData, err := os.ReadFile(homeDir + AWS_PROFILE_CONFIG_DIRECTORY)
+	awsProfileConfigData, err := os.ReadFile(homeDir + config.AWS_PROFILE_CONFIG_DIRECTORY)
 
 	if err != nil {
 		util.ErrorPrint(err.Error())
