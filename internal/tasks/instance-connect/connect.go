@@ -151,19 +151,11 @@ func ConnectInstance() {
 	region := common.SelectRegion(profile)
 
 	// Check existence of instance key
-	configDir, configDirErr := os.UserConfigDir()
-	if configDirErr != nil {
-		util.ErrorPrint(configDirErr.Error())
-		os.Exit(1)
-	}
+	homeUserDir, _ := os.UserHomeDir()
 
-	keyPairFolder := configDir + EC2_KEYS_DIRECTORY + "/" + profile + "/" + region
+	keyPairFolder := fmt.Sprintf("%s/.ssh/%s/%s", homeUserDir, profile, region)
 
-	_, err := os.Stat(
-		keyPairFolder,
-	)
-
-	if err != nil {
+	if _, err := os.Stat(keyPairFolder); err != nil {
 		// Create keys folder
 		err := os.MkdirAll(keyPairFolder, 0755)
 		if err != nil {
