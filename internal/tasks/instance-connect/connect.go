@@ -115,15 +115,19 @@ func selectUser(keyFolderDirectory string, instanceId string) string {
 	return selectedUser
 }
 
-func getSSHCommand(keyPairFolder, user, profile, instanceId string, publicIp *string) string {
+func getSSHCommand(
+	region, keyPairFolder, user, profile, instanceId string,
+	publicIp *string,
+) string {
 	keyPairDirectory := fmt.Sprintf("%s/%s@%s", keyPairFolder, user, instanceId)
 
 	if publicIp == nil {
 		sshCommand := fmt.Sprintf(
-			"ssh -i %s -o ProxyCommand='aws ec2-instance-connect open-tunnel --instance-id %s --profile %s' %s@%s",
+			"ssh -i %s -o ProxyCommand='aws ec2-instance-connect open-tunnel --instance-id %s --profile %s --region %s' %s@%s",
 			keyPairDirectory,
 			instanceId,
 			profile,
+			region,
 			user,
 			instanceId,
 		)
@@ -147,45 +151,59 @@ func getConnectMethod() string {
 }
 
 func ConnectInstance() {
-	profile := common.SelectAwsProfile()
-	region := common.SelectRegion(profile)
+	serverLocations := []string{"AWS", "Other"}
+	selectServerLocationPrompt := &survey.Select{
+		Message: "Select the location of server",
+		Options: serverLocations,
+	}
+	selectedServerLocation := "AWS"
+	survey.AskOne(selectServerLocationPrompt, &selectedServerLocation)
 
-	// Check existence of instance key
-	homeUserDir, _ := os.UserHomeDir()
+	if selectedServerLocation == "AWS" {
+		profile := common.SelectAwsProfile()
+		region := common.SelectRegion(profile)
 
-	keyPairFolder := fmt.Sprintf("%s/.ssh/%s/%s", homeUserDir, profile, region)
+		// Check existence of instance key
+		homeUserDir, _ := os.UserHomeDir()
 
-	if _, err := os.Stat(keyPairFolder); err != nil {
-		// Create keys folder
-		err := os.MkdirAll(keyPairFolder, 0755)
-		if err != nil {
-			util.ErrorPrint(err.Error())
-			os.Exit(1)
+		keyPairFolder := fmt.Sprintf("%s/.ssh/%s/%s", homeUserDir, profile, region)
+
+		if _, err := os.Stat(keyPairFolder); err != nil {
+			// Create keys folder
+			err := os.MkdirAll(keyPairFolder, 0755)
+			if err != nil {
+				util.ErrorPrint(err.Error())
+				os.Exit(1)
+			}
 		}
-	}
 
-	instance := selectInstance(profile, region)
-	connectionMethod := getConnectMethod()
+		instance := selectInstance(profile, region)
+		connectionMethod := getConnectMethod()
 
-	if connectionMethod == "SSH" {
-		user := selectUser(keyPairFolder, *instance.InstanceId)
-		command := getSSHCommand(
-			keyPairFolder,
-			user,
-			profile,
-			*instance.InstanceId,
-			instance.PublicIp,
-		)
-		clipboard.WriteAll(command)
-		fmt.Println("Copyied SSH command to clipboard")
-	}
+		if connectionMethod == "SSH" {
+			user := selectUser(keyPairFolder, *instance.InstanceId)
+			command := getSSHCommand(
+				region,
+				keyPairFolder,
+				user,
+				profile,
+				*instance.InstanceId,
+				instance.PublicIp,
+			)
+			clipboard.WriteAll(command)
+			fmt.Println("Copyied SSH command to clipboard")
+		}
 
-	if connectionMethod == "AWS System Manager" {
-		connectCommand := fmt.Sprintf(
-			"aws ssm start-session --target %s --profile %s",
-			*instance.InstanceId,
-			profile,
-		)
-		clipboard.WriteAll(connectCommand)
+		if connectionMethod == "AWS System Manager" {
+			connectCommand := fmt.Sprintf(
+				"aws ssm start-session --target %s --profile %s --region %s",
+				*instance.InstanceId,
+				profile,
+				region,
+			)
+			clipboard.WriteAll(connectCommand)
+		}
+	} else if selectedServerLocation == "Other" {
+
 	}
 }
