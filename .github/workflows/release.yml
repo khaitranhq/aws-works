@@ -8,12 +8,16 @@ jobs:
   release-linux-amd64:
     name: release linux/amd64
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+
     - uses: wangyoucao577/go-release-action@v1
       with:
         github_token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
-        goos: linux
+        goos: ${{ matrix.os }}
         goarch: amd64
         binary_name: awsworks
-        goversion: 1.20.9
+        goversion: 1.22.1
