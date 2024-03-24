@@ -7,11 +7,11 @@ import (
 
 	// "os/exec"
 
-	"github.com/khaitranhq/survey"
 	"github.com/atotto/clipboard"
 	"github.com/khaitranhq/aws-works/internal/aws/ec2"
 	"github.com/khaitranhq/aws-works/internal/common"
 	"github.com/khaitranhq/aws-works/internal/util"
+	"github.com/khaitranhq/survey"
 )
 
 const EC2_KEYS_DIRECTORY = "/aws-works/keys"
@@ -159,51 +159,47 @@ func ConnectServerTask() {
 	selectedServerLocation := "AWS"
 	survey.AskOne(selectServerLocationPrompt, &selectedServerLocation)
 
-	if selectedServerLocation == "AWS" {
-		profile := common.SelectAwsProfile()
-		region := common.SelectRegion(profile)
+	profile := common.SelectAwsProfile()
+	region := common.SelectRegion(profile)
 
-		// Check existence of instance key
-		homeUserDir, _ := os.UserHomeDir()
+	// Check existence of instance key
+	homeUserDir, _ := os.UserHomeDir()
 
-		keyPairFolder := fmt.Sprintf("%s/.ssh/%s/%s", homeUserDir, profile, region)
+	keyPairFolder := fmt.Sprintf("%s/.ssh/%s/%s", homeUserDir, profile, region)
 
-		if _, err := os.Stat(keyPairFolder); err != nil {
-			// Create keys folder
-			err := os.MkdirAll(keyPairFolder, 0755)
-			if err != nil {
-				util.ErrorPrint(err.Error())
-				os.Exit(1)
-			}
+	if _, err := os.Stat(keyPairFolder); err != nil {
+		// Create keys folder
+		err := os.MkdirAll(keyPairFolder, 0755)
+		if err != nil {
+			util.ErrorPrint(err.Error())
+			os.Exit(1)
 		}
+	}
 
-		instance := selectInstance(profile, region)
-		connectionMethod := getConnectMethod()
+	instance := selectInstance(profile, region)
+	connectionMethod := getConnectMethod()
 
-		if connectionMethod == "SSH" {
-			user := selectUser(keyPairFolder, *instance.InstanceId)
-			command := getSSHCommand(
-				region,
-				keyPairFolder,
-				user,
-				profile,
-				*instance.InstanceId,
-				instance.PublicIp,
-			)
-			clipboard.WriteAll(command)
-			fmt.Println("Copyied SSH command to clipboard")
-		}
+	if connectionMethod == "SSH" {
+		user := selectUser(keyPairFolder, *instance.InstanceId)
+		command := getSSHCommand(
+			region,
+			keyPairFolder,
+			user,
+			profile,
+			*instance.InstanceId,
+			instance.PublicIp,
+		)
+		clipboard.WriteAll(command)
+		fmt.Println("Copyied SSH command to clipboard")
+	}
 
-		if connectionMethod == "AWS System Manager" {
-			connectCommand := fmt.Sprintf(
-				"aws ssm start-session --target %s --profile %s --region %s",
-				*instance.InstanceId,
-				profile,
-				region,
-			)
-			clipboard.WriteAll(connectCommand)
-		}
-	} else if selectedServerLocation == "Other" {
-
+	if connectionMethod == "AWS System Manager" {
+		connectCommand := fmt.Sprintf(
+			"aws ssm start-session --target %s --profile %s --region %s",
+			*instance.InstanceId,
+			profile,
+			region,
+		)
+		clipboard.WriteAll(connectCommand)
 	}
 }
