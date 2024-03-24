@@ -1,4 +1,4 @@
-package instance_connect
+package server_connect
 
 import (
 	"fmt"
@@ -150,7 +150,7 @@ func getConnectMethod() string {
 	return selectedMethod
 }
 
-func ConnectInstance() {
+func ConnectServerTask() {
 	serverLocations := []string{"AWS", "Other"}
 	selectServerLocationPrompt := &survey.Select{
 		Message: "Select the location of server",
