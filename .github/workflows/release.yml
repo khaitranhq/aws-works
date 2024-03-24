@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [linux, windows, "darwin"]
     steps:
     - uses: actions/checkout@v4
 
