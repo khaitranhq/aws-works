@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/AlecAivazis/survey/v2"
+	"github.com/khaitranhq/survey"
 	instance_connect "github.com/khaitranhq/aws-works/internal/tasks/instance-connect"
 )
 

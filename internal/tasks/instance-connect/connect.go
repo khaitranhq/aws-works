@@ -7,7 +7,7 @@ import (
 
 	// "os/exec"
 
-	"github.com/AlecAivazis/survey/v2"
+	"github.com/khaitranhq/survey"
 	"github.com/atotto/clipboard"
 	"github.com/khaitranhq/aws-works/internal/aws/ec2"
 	"github.com/khaitranhq/aws-works/internal/common"
