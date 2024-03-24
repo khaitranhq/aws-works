@@ -1,13 +1,15 @@
 module github.com/khaitranhq/aws-works
 
-go 1.20
+go 1.22
+
+toolchain go1.22.1
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.3.7
 	github.com/atotto/clipboard v0.1.4
 	github.com/aws/aws-sdk-go-v2/config v1.18.33
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.111.0
 	github.com/dlclark/regexp2 v1.10.0
+	github.com/khaitranhq/survey v1.0.0
 )
 
 require (

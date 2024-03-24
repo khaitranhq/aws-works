@@ -3,7 +3,7 @@ package common
 import (
 	"os"
 
-	"github.com/AlecAivazis/survey/v2"
+	"github.com/khaitranhq/survey"
 	"github.com/dlclark/regexp2"
 	"github.com/khaitranhq/aws-works/internal/config"
 	"github.com/khaitranhq/aws-works/internal/util"

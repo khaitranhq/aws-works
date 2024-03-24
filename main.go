@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/AlecAivazis/survey/v2"
-	instance_connect "github.com/khaitranhq/aws-works/internal/tasks/instance-connect"
+	server_connect "github.com/khaitranhq/aws-works/internal/tasks/server-connect"
+	"github.com/khaitranhq/survey"
 )
 
 type Task struct {
@@ -34,8 +34,8 @@ func selectTask(tasks []Task) Task {
 
 func main() {
 	tasks := []Task{{
-		Description: "1. Connect to instance",
-		Command:     instance_connect.ConnectInstance,
+		Description: "1. Connect to a server",
+		Command:     server_connect.ConnectServerTask,
 	}}
 
 	selectedTask := selectTask(tasks)
