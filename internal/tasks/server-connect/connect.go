@@ -151,14 +151,6 @@ func getConnectMethod() string {
 }
 
 func ConnectServerTask() {
-	serverLocations := []string{"AWS", "Other"}
-	selectServerLocationPrompt := &survey.Select{
-		Message: "Select the location of server",
-		Options: serverLocations,
-	}
-	selectedServerLocation := "AWS"
-	survey.AskOne(selectServerLocationPrompt, &selectedServerLocation)
-
 	profile := common.SelectAwsProfile()
 	region := common.SelectRegion(profile)
 
